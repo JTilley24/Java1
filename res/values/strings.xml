@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Java1</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
+    <string-array name="cars_array">
+        <item>Camaro</item>
+        <item>Civic</item>
+        <item>Dart</item>
+        <item>Explorer</item>
+        <item>Sienna</item>
+    </string-array>
+    
+</resources>
