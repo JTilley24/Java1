@@ -2,11 +2,11 @@ package com.jtilley.java1;
 
 public enum cars {
 
-	Civic("Civic", "Honda", 4, 1.8, "sedan"),
-	Camaro("Camaro", "Chevy", 8, 6.2, "coupe"),
-	Dart("Dart", "Dodge", 4, 2.0,"sedan"),
-	Explorer("Explorer", "Ford", 6, 3.5, "suv"),
-	Sienna("Sienna", "Toyota", 6, 3.5, "minivan");
+	Civic("Civic", "Honda", 4, 1.8, "Sedan"),
+	Camaro("Camaro", "Chevy", 8, 6.2, "Coupe"),
+	Dart("Dart", "Dodge", 4, 2.0,"Sedan"),
+	Explorer("Explorer", "Ford", 6, 3.5, "SUV"),
+	Sienna("Sienna", "Toyota", 6, 3.5, "Minivan");
 	
 	
 	private final String model;
