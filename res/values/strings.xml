@@ -6,11 +6,32 @@
     <string name="hello_world">Hello world!</string>
 
     <string-array name="cars_array">
-        <item>Camaro</item>
-        <item>Civic</item>
-        <item>Dart</item>
-        <item>Explorer</item>
-        <item>Sienna</item>
+        <item>Acura</item>
+        <item>Audi</item>
+        <item>BMW</item>
+        <item>Buick</item>
+        <item>Cadillac</item>
+        <item>Chevrolet</item>
+        <item>Chrysler</item>
+        <item>Dodge</item>
+        <item>Ford</item>
+        <item>GMC</item>
+        <item>Honda</item>
+        <item>Hyundai</item>
+        <item>Infiniti</item>
+        <item>Jeep</item>
+        <item>Kia</item>
+        <item>Lexus</item>
+        <item>Lincoln</item>
+        <item>Mazda</item>
+        <item>Mercedes-Benz</item>
+        <item>Mitsubishi</item>
+        <item>Nissan</item>
+       <item>Scion</item>
+       <item>Subaru</item>
+       <item>Toyota</item>
+       <item>Volkswagen</item>
+       <item>Volvo</item>
     </string-array>
     
 </resources>

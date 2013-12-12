@@ -1,4 +1,5 @@
 package com.jtilley.java1;
+//Justin Tilley Java 1
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -24,11 +25,9 @@ import android.widget.RadioGroup;
 public class MainActivity extends Activity {
 	Context mContext;
 	String[] mListItems;
+	String[] styleArray;
 	String selectedCar;
-	String selectedOutput;
-	int cylinders;
-	double engine;
-	
+	String selectedStyle;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +35,9 @@ public class MainActivity extends Activity {
 		
 		mContext = this;
 		mListItems = getResources().getStringArray(R.array.cars_array);
-		selectedOutput = "HP";
+		styleArray = new String[] {"All", "Coupe", "Sedan", "Convertible", "Pickup", "SUV", "Minivan"};
+		selectedStyle = "All";
+		selectedCar = "Acura";
 		
 		//Create Linear Layout
 		LinearLayout linearLayoutMain = new LinearLayout(mContext);
@@ -55,9 +56,8 @@ public class MainActivity extends Activity {
 		//Set OnSelected Listener for Spinner
 		viewSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
-				selectedCar = json.readJSON(mListItems[position]);
-				cylinders = cars.valueOf(mListItems[position]).setCyl();
-				engine = cars.valueOf(mListItems[position]).setEngine();
+				selectedCar = mListItems[position];
+				System.out.println(selectedCar);
 			}
 			public void onNothingSelected(AdapterView<?> arg0){
 				
@@ -74,39 +74,56 @@ public class MainActivity extends Activity {
 		title.setBackgroundColor(Color.LTGRAY);
 		
 		//Create Radio Buttons
-		final RadioButton[] rb = new RadioButton[2];
+		final RadioButton[] rb = new RadioButton[styleArray.length];
 		final RadioGroup rg = new RadioGroup(mContext);
-		LinearLayout.LayoutParams radioParams = new RadioGroup.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		final RadioGroup rg2 = new RadioGroup(mContext);
+		
+		LinearLayout.LayoutParams radioParams = new RadioGroup.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		radioParams.setMargins(20, 20, 20, 20);
+		
 		rg.setLayoutParams(radioParams);
 		rg.setOrientation(RadioGroup.HORIZONTAL);
 		rg.setGravity(Gravity.CENTER);
+		
+		rg2.setLayoutParams(radioParams);
+		rg2.setOrientation(RadioGroup.HORIZONTAL);
+		rg2.setGravity(Gravity.CENTER);
 		
 		//Set OnClick Listener for Radio Buttons
 		OnClickListener onRadioButtonClicked = new OnClickListener(){
 			 public void onClick(View v){
 				RadioButton button = (RadioButton) v;
 				v.setSelected(true);
-				selectedOutput = (String) button.getText();
+				if(button.getId() < 4){
+					selectedStyle = (String) button.getText();
+					System.out.println("" + selectedStyle);
+				}else if(button.getId() == 4){
+					selectedStyle = "Extended+Cab+Pickup";
+					System.out.println("" + selectedStyle);
+				}else if(button.getId() == 5){
+					selectedStyle = "4dr+SUV";
+					System.out.println("" + selectedStyle);
+				}else if(button.getId() == 6){
+					selectedStyle = "Passenger+Minivan";
+					System.out.println("" + selectedStyle);
+				}
 			 }
 		 };
 		 
 		 //Create Individual Radio Buttons
-		for(int i = 0; i < 2; i++)
+		for(int i = 0; i < styleArray.length; i++)
 		{
 			rb[i] = new RadioButton(this);
-			if(i == 0){
-				rb[i].setText("HP");
-				rb[i].setId(1);
-				rb[i].setOnClickListener(onRadioButtonClicked);
+			rb[i].setText(styleArray[i]);
+			rb[i].setId(i);
+			rb[i].setOnClickListener(onRadioButtonClicked);
+			if(i <= (styleArray.length / 2)){
+				rg.addView(rb[i]);
 			} else{
-				rb[i].setText("MPG");
-				rb[i].setId(2);
-				rb[i].setOnClickListener(onRadioButtonClicked);
+				rg2.addView(rb[i]);
 			}
-			rg.addView(rb[i]);
 		}
-		rg.check(1);
+		rg.check(0);
 		
 		//Create TextView for Results
 		final TextView txtView = new TextView(mContext);
@@ -120,21 +137,27 @@ public class MainActivity extends Activity {
 		bt.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 		OnClickListener onButtonClicked = new OnClickListener(){
 			public void onClick(View v){
-				output newOutput = new output(engine, cylinders);
-				if(selectedOutput == "HP"){	
-					txtView.setText(selectedCar + "\r" + "HorsePower: " + newOutput.hp);
-				}else if(selectedOutput == "MPG"){
-					txtView.setText(selectedCar + "\r" + "Miles Per Gallon: " + newOutput.mpg);
+				ConnectionCheck connection = new ConnectionCheck();
+				if(connection.checkConnection(mContext)){
+					JSONCars json = new JSONCars();
+					json.getCarsJSON(mContext, selectedCar, selectedStyle);
+					System.out.println("Connected");
+				}else{
+					System.out.println("Not Connect");
 				}
 			}
 			
 		};
 		bt.setOnClickListener(onButtonClicked);
 		
+		
+		
+		
 		//Add UI Elements to View
 		linearLayoutMain.addView(title);
 		linearLayoutMain.addView(viewSpinner);
 		linearLayoutMain.addView(rg);
+		linearLayoutMain.addView(rg2);
 		linearLayoutMain.addView(bt);
 		linearLayoutMain.addView(txtView);
 	
