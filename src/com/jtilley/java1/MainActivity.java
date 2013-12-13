@@ -1,6 +1,8 @@
 package com.jtilley.java1;
 //Justin Tilley Java 1
 
+import java.util.ArrayList;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
@@ -20,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
@@ -28,6 +31,7 @@ public class MainActivity extends Activity {
 	String[] styleArray;
 	String selectedCar;
 	String selectedStyle;
+	String carsString;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,15 @@ public class MainActivity extends Activity {
 		styleArray = new String[] {"All", "Coupe", "Sedan", "Convertible", "Pickup", "SUV", "Minivan"};
 		selectedStyle = "All";
 		selectedCar = "Acura";
+		
+	
+		//Check for Connection
+		ConnectionCheck connection = new ConnectionCheck();
+		if(connection.checkConnection(mContext)){
+			Toast.makeText(mContext, "Connected", Toast.LENGTH_LONG).show();
+		}else{
+			Toast.makeText(mContext, "Not Connected.Please connect and try again.", Toast.LENGTH_LONG).show();
+		}
 		
 		//Create Linear Layout
 		LinearLayout linearLayoutMain = new LinearLayout(mContext);
@@ -57,7 +70,6 @@ public class MainActivity extends Activity {
 		viewSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
 				selectedCar = mListItems[position];
-				System.out.println(selectedCar);
 			}
 			public void onNothingSelected(AdapterView<?> arg0){
 				
@@ -93,19 +105,35 @@ public class MainActivity extends Activity {
 		OnClickListener onRadioButtonClicked = new OnClickListener(){
 			 public void onClick(View v){
 				RadioButton button = (RadioButton) v;
-				v.setSelected(true);
+				button.setSelected(true);
 				if(button.getId() < 4){
 					selectedStyle = (String) button.getText();
-					System.out.println("" + selectedStyle);
+					int checkedId = rg2.getCheckedRadioButtonId();
+					if(checkedId >= 0){
+						RadioButton checkedButton = (RadioButton) findViewById(checkedId);
+						checkedButton.setChecked(false);
+					}
 				}else if(button.getId() == 4){
 					selectedStyle = "Extended+Cab+Pickup";
-					System.out.println("" + selectedStyle);
+					int checkedId = rg.getCheckedRadioButtonId();
+					if(checkedId >= 0){
+						RadioButton checkedButton = (RadioButton) findViewById(checkedId);
+						checkedButton.setChecked(false);
+					}
 				}else if(button.getId() == 5){
 					selectedStyle = "4dr+SUV";
-					System.out.println("" + selectedStyle);
+					int checkedId = rg.getCheckedRadioButtonId();
+					if(checkedId >= 0){
+						RadioButton checkedButton = (RadioButton) findViewById(checkedId);
+						checkedButton.setChecked(false);
+					}
 				}else if(button.getId() == 6){
 					selectedStyle = "Passenger+Minivan";
-					System.out.println("" + selectedStyle);
+					int checkedId = rg.getCheckedRadioButtonId();
+					if(checkedId >= 0){
+						RadioButton checkedButton = (RadioButton) findViewById(checkedId);
+						checkedButton.setChecked(false);
+					}
 				}
 			 }
 		 };
@@ -140,17 +168,23 @@ public class MainActivity extends Activity {
 				ConnectionCheck connection = new ConnectionCheck();
 				if(connection.checkConnection(mContext)){
 					JSONCars json = new JSONCars();
-					json.getCarsJSON(mContext, selectedCar, selectedStyle);
-					System.out.println("Connected");
+					ArrayList<String> modelsArray = json.readCarsJSON(mContext, selectedCar, selectedStyle);
+					if(modelsArray.size() > 0){
+						txtView.setText("");
+						for(int i = 0; i < modelsArray.size(); i++){
+							String tempString = selectedCar + " "  + modelsArray.get(i) + "\n";
+							txtView.append(tempString);
+						}
+					}else{
+						txtView.setText("No vehicles available. Please try again.");
+					}
 				}else{
-					System.out.println("Not Connect");
+					txtView.setText("Not Connected.Please connect and try again.");
 				}
 			}
-			
 		};
+		
 		bt.setOnClickListener(onButtonClicked);
-		
-		
 		
 		
 		//Add UI Elements to View
