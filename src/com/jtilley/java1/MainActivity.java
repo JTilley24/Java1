@@ -18,8 +18,10 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -29,9 +31,12 @@ public class MainActivity extends Activity {
 	Context mContext;
 	String[] mListItems;
 	String[] styleArray;
+	ArrayList<String> modelsArray;
 	String selectedCar;
 	String selectedStyle;
 	String carsString;
+	
+	public static Boolean modelsPopulated = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +44,10 @@ public class MainActivity extends Activity {
 		
 		mContext = this;
 		mListItems = getResources().getStringArray(R.array.cars_array);
-		styleArray = new String[] {"All", "Coupe", "Sedan", "Convertible", "Pickup", "SUV", "Minivan"};
+		styleArray = getResources().getStringArray(R.array.styles_array);
 		selectedStyle = "All";
 		selectedCar = "Acura";
+		final ListView modelsList = new ListView(mContext);
 		
 	
 		//Check for Connection
@@ -52,8 +58,14 @@ public class MainActivity extends Activity {
 			Toast.makeText(mContext, "Not Connected.Please connect and try again.", Toast.LENGTH_LONG).show();
 		}
 		
+		//Create TextView for Results
+				final TextView txtView = new TextView(mContext);
+				txtView.setText("Please select vehicle and output.");
+				txtView.setGravity(Gravity.CENTER);
+				txtView.setTextSize(16);
+		
 		//Create Linear Layout
-		LinearLayout linearLayoutMain = new LinearLayout(mContext);
+		final LinearLayout linearLayoutMain = new LinearLayout(mContext);
 		linearLayoutMain.setOrientation(LinearLayout.VERTICAL);
 		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		linearLayoutMain.setLayoutParams(lp);
@@ -70,6 +82,11 @@ public class MainActivity extends Activity {
 		viewSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
 				selectedCar = mListItems[position];
+				txtView.setText("Please select vehicle and output.");
+				if(modelsPopulated == true){
+					linearLayoutMain.removeView(modelsList);
+					linearLayoutMain.addView(txtView);
+				}
 			}
 			public void onNothingSelected(AdapterView<?> arg0){
 				
@@ -85,36 +102,56 @@ public class MainActivity extends Activity {
 		title.setTypeface(null, Typeface.BOLD);
 		title.setBackgroundColor(Color.LTGRAY);
 		
+		//Create ImageView
+		final ImageView styleImg = new ImageView(mContext);
+		styleImg.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		
 		//Create Radio Buttons
 		final RadioButton[] rb = new RadioButton[styleArray.length];
-		final RadioGroup rg = new RadioGroup(mContext);
-		final RadioGroup rg2 = new RadioGroup(mContext);
+		final RadioGroup rg = (RadioGroup)getLayoutInflater().inflate(R.layout.carstyles, null);
+		final RadioGroup rg2 =(RadioGroup)getLayoutInflater().inflate(R.layout.carstyles, null);
 		
-		LinearLayout.LayoutParams radioParams = new RadioGroup.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-		radioParams.setMargins(20, 20, 20, 20);
-		
-		rg.setLayoutParams(radioParams);
-		rg.setOrientation(RadioGroup.HORIZONTAL);
-		rg.setGravity(Gravity.CENTER);
-		
-		rg2.setLayoutParams(radioParams);
-		rg2.setOrientation(RadioGroup.HORIZONTAL);
-		rg2.setGravity(Gravity.CENTER);
 		
 		//Set OnClick Listener for Radio Buttons
 		OnClickListener onRadioButtonClicked = new OnClickListener(){
 			 public void onClick(View v){
 				RadioButton button = (RadioButton) v;
 				button.setSelected(true);
-				if(button.getId() < 4){
-					selectedStyle = (String) button.getText();
+				if(button.getId() == 0){
+					selectedStyle = "All";
 					int checkedId = rg2.getCheckedRadioButtonId();
 					if(checkedId >= 0){
 						RadioButton checkedButton = (RadioButton) findViewById(checkedId);
 						checkedButton.setChecked(false);
 					}
-				}else if(button.getId() == 4){
+				}else if((button.getId() == 1)){
+					selectedStyle = (String) button.getText();
+					styleImg.setImageResource(R.drawable.coupe);
+					int checkedId = rg2.getCheckedRadioButtonId();
+					if(checkedId >= 0){
+						RadioButton checkedButton = (RadioButton) findViewById(checkedId);
+						checkedButton.setChecked(false);
+					}
+				}else if((button.getId() == 2)){
+					selectedStyle = (String) button.getText();
+					styleImg.setImageResource(R.drawable.sedan);
+					int checkedId = rg2.getCheckedRadioButtonId();
+					if(checkedId >= 0){
+						RadioButton checkedButton = (RadioButton) findViewById(checkedId);
+						checkedButton.setChecked(false);
+					}
+				}else if((button.getId() == 3)){
+					selectedStyle = (String) button.getText();
+					styleImg.setImageResource(R.drawable.convertible);
+					int checkedId = rg2.getCheckedRadioButtonId();
+					if(checkedId >= 0){
+						RadioButton checkedButton = (RadioButton) findViewById(checkedId);
+						checkedButton.setChecked(false);
+					}
+				}
+				else if(button.getId() == 4){
 					selectedStyle = "Extended+Cab+Pickup";
+					styleImg.setImageResource(R.drawable.pickup);
 					int checkedId = rg.getCheckedRadioButtonId();
 					if(checkedId >= 0){
 						RadioButton checkedButton = (RadioButton) findViewById(checkedId);
@@ -122,6 +159,7 @@ public class MainActivity extends Activity {
 					}
 				}else if(button.getId() == 5){
 					selectedStyle = "4dr+SUV";
+					styleImg.setImageResource(R.drawable.suv);
 					int checkedId = rg.getCheckedRadioButtonId();
 					if(checkedId >= 0){
 						RadioButton checkedButton = (RadioButton) findViewById(checkedId);
@@ -129,6 +167,7 @@ public class MainActivity extends Activity {
 					}
 				}else if(button.getId() == 6){
 					selectedStyle = "Passenger+Minivan";
+					styleImg.setImageResource(R.drawable.minivan);
 					int checkedId = rg.getCheckedRadioButtonId();
 					if(checkedId >= 0){
 						RadioButton checkedButton = (RadioButton) findViewById(checkedId);
@@ -141,8 +180,8 @@ public class MainActivity extends Activity {
 		 //Create Individual Radio Buttons
 		for(int i = 0; i < styleArray.length; i++)
 		{
-			rb[i] = new RadioButton(this);
-			rb[i].setText(styleArray[i]);
+			rb[i] = (RadioButton)getLayoutInflater().inflate(R.layout.stylebuttons, null);
+			rb[i].setText(styleArray[i].toString());
 			rb[i].setId(i);
 			rb[i].setOnClickListener(onRadioButtonClicked);
 			if(i <= (styleArray.length / 2)){
@@ -153,11 +192,7 @@ public class MainActivity extends Activity {
 		}
 		rg.check(0);
 		
-		//Create TextView for Results
-		final TextView txtView = new TextView(mContext);
-		txtView.setText("Please select vehicle and output.");
-		txtView.setGravity(Gravity.CENTER);
-		txtView.setTextSize(16);
+		
 		
 		//Create Button and OnClick Listener
 		Button bt = new Button(this);
@@ -168,18 +203,47 @@ public class MainActivity extends Activity {
 				ConnectionCheck connection = new ConnectionCheck();
 				if(connection.checkConnection(mContext)){
 					JSONCars json = new JSONCars();
-					ArrayList<String> modelsArray = json.readCarsJSON(mContext, selectedCar, selectedStyle);
-					if(modelsArray.size() > 0){
-						txtView.setText("");
-						for(int i = 0; i < modelsArray.size(); i++){
-							String tempString = selectedCar + " "  + modelsArray.get(i) + "\n";
-							txtView.append(tempString);
+					ArrayList<String> jsonArray = json.readCarsJSON(mContext, selectedCar, selectedStyle);
+					System.out.println(jsonArray);
+					linearLayoutMain.removeView(txtView);
+					modelsArray = new ArrayList<String>();
+					
+					if(modelsPopulated = true){
+						linearLayoutMain.removeView(modelsList);
+						
+					}
+					
+					if(jsonArray.size() > 0){
+						for(int i = 0; i < jsonArray.size(); i++){
+							String tempString = selectedCar + " "  + jsonArray.get(i) + "\n";
+							modelsArray.add(tempString);
 						}
+						
+						ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_list_item_1, modelsArray);
+						
+						modelsList.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+						modelsList.setAdapter(listAdapter);
+						modelsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+							
+							@Override
+							public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+								Toast.makeText(mContext, modelsArray.get(position), Toast.LENGTH_LONG).show();
+								
+							}
+						});
+						
+						modelsPopulated = true;
+						linearLayoutMain.addView(modelsList);
+						
 					}else{
 						txtView.setText("No vehicles available. Please try again.");
+						linearLayoutMain.addView(txtView);
+						modelsPopulated = false;
 					}
 				}else{
 					txtView.setText("Not Connected.Please connect and try again.");
+					linearLayoutMain.addView(txtView);
+					modelsPopulated = false;
 				}
 			}
 		};
@@ -192,6 +256,7 @@ public class MainActivity extends Activity {
 		linearLayoutMain.addView(viewSpinner);
 		linearLayoutMain.addView(rg);
 		linearLayoutMain.addView(rg2);
+		linearLayoutMain.addView(styleImg);
 		linearLayoutMain.addView(bt);
 		linearLayoutMain.addView(txtView);
 	

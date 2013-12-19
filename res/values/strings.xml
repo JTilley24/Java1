@@ -34,4 +34,14 @@
        <item>Volvo</item>
     </string-array>
     
+    <string-array name="styles_array">
+        <item>All</item>
+        <item>Coupe</item>
+        <item>Sedan</item>
+        <item>Convertible</item>
+        <item>Pickup</item>
+        <item>SUV</item>
+        <item>Minivan</item>
+     </string-array>
+    
 </resources>
