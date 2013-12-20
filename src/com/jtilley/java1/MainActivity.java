@@ -2,13 +2,11 @@ package com.jtilley.java1;
 //Justin Tilley Java 1
 
 import java.util.ArrayList;
-
+import com.jtilley.java1.ConnectionCheck;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,7 +47,6 @@ public class MainActivity extends Activity {
 		selectedCar = "Acura";
 		final ListView modelsList = new ListView(mContext);
 		
-	
 		//Check for Connection
 		ConnectionCheck connection = new ConnectionCheck();
 		if(connection.checkConnection(mContext)){
@@ -94,17 +91,12 @@ public class MainActivity extends Activity {
 		});
 		
 		//Create Title 
-		TextView title = new TextView(mContext);
+		TextView title = (TextView)getLayoutInflater().inflate(R.layout.titletext, null);
 		title.setText("Auto Details App");
-		title.setGravity(Gravity.CENTER);
-		title.setTextSize(30);
-		title.setTextColor(Color.BLUE);
-		title.setTypeface(null, Typeface.BOLD);
-		title.setBackgroundColor(Color.LTGRAY);
 		
 		//Create ImageView
-		final ImageView styleImg = new ImageView(mContext);
-		styleImg.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		final ImageView styleImg = (ImageView)getLayoutInflater().inflate(R.layout.carsimage, null);
+		styleImg.setImageResource(R.drawable.all);
 		
 		//Create Radio Buttons
 		final RadioButton[] rb = new RadioButton[styleArray.length];
@@ -119,6 +111,7 @@ public class MainActivity extends Activity {
 				button.setSelected(true);
 				if(button.getId() == 0){
 					selectedStyle = "All";
+					styleImg.setImageResource(R.drawable.all);
 					int checkedId = rg2.getCheckedRadioButtonId();
 					if(checkedId >= 0){
 						RadioButton checkedButton = (RadioButton) findViewById(checkedId);
